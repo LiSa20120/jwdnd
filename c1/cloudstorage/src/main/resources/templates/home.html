@@ -75,13 +75,17 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
+                                    <tr th:each="note: ${notes}">
                                         <td>
-                                            <button type="button" class="btn btn-success">Edit</button>
-                                            <a class="btn btn-danger">Delete</a>
+                                            <button type="button"
+                                            class="btn btn-success"
+                                            th:attr="id=${note.noteId}, title=${note.noteTitle}, desc=${note.noteDescription}"
+                                            th:onClick="showNoteModal(this.getAttribute('id'),this.getAttribute('title'),this.getAttribute('desc'))"
+                                            >Edit</button>
+                                            <a class="btn btn-danger" th:id="${note.noteId}" th:href="@{/home/notes/delete/{id}(id=${note.noteId})}">Delete</a>
                                         </td>
-                                        <th scope="row">Example Note Title</th>
-                                        <td>Example Note Description </td>
+                                        <th scope="row" th:text="${note.noteTitle}"></th>
+                                        <td th:text="${note.noteDescription}"></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -97,7 +101,7 @@
                                         </button>
                                     </div>
                                     <div class="modal-body">
-                                        <form action="#" method="POST">
+                                        <form action="#" method="POST" th:action="@{/home/notes}" th:object="${note}">
                                             <input type="hidden" name="noteId" id="note-id">
                                             <div class="form-group">
                                                 <label for="note-title" class="col-form-label">Title</label>

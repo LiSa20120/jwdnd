@@ -36,4 +36,8 @@ public class UserService {
         logger.info("New user created with userId={}", userId);
         return userId;
     }
+
+    public User getUserByUserName(String userName) {
+        return userMapper.findUserByName(userName);
+    }
 }
