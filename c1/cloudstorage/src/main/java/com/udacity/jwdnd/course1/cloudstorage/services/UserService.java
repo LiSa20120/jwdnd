@@ -33,7 +33,7 @@ public class UserService {
         var hashedPassword = hashService.getHashedValue(user.getPassword(), encodedSalt);
         user.setPassword(hashedPassword);
         var userId = userMapper.insertNewUser(user);
-        logger.info("New user created with userId={}", userId);
+        logger.info("New user created with userName={}", user.getUsername());
         return userId;
     }
 

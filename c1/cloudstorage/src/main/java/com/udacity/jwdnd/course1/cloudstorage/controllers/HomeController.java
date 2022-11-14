@@ -1,7 +1,9 @@
 package com.udacity.jwdnd.course1.cloudstorage.controllers;
 
+import com.udacity.jwdnd.course1.cloudstorage.entities.Credential;
 import com.udacity.jwdnd.course1.cloudstorage.entities.File;
 import com.udacity.jwdnd.course1.cloudstorage.entities.Note;
+import com.udacity.jwdnd.course1.cloudstorage.services.CredentialService;
 import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
 import com.udacity.jwdnd.course1.cloudstorage.services.NoteService;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
@@ -33,6 +35,8 @@ public class HomeController {
     NoteService noteService;
     @Autowired
     FileService fileService;
+    @Autowired
+    CredentialService credentialService;
 
     @GetMapping
     public String homeView(Authentication auth, Model model) {
@@ -42,8 +46,10 @@ public class HomeController {
             if(user != null) {
                 List<Note> notes = noteService.getAllNotes(user.getUserid());
                 List<File> files = fileService.getAllFiles(user.getUserid());
+                List<Credential> credentials = credentialService.getAllCredentials(user.getUserid());
                 model.addAttribute("notes", notes);
                 model.addAttribute("files", files);
+                model.addAttribute("credentials", credentials);
             }
         }
         return "home";
@@ -51,14 +57,13 @@ public class HomeController {
 
     @PostMapping("/notes")
     public String saveNote(Authentication auth, @ModelAttribute("note") Note note, Model model) {
-        note.setUserId(userService.getUserByUserName(auth.getName()).getUserid());
         var saved = -1;
         if (note.getNoteId() != null) {
             saved = noteService.updateNote(note);
         } else {
+            note.setUserId(userService.getUserByUserName(auth.getName()).getUserid());
             saved = noteService.addNewNote(note);
         }
-
         if (saved < 0) {
             logger.error("Could not save note");
             model.addAttribute("saveNoteError", true);
@@ -134,6 +139,39 @@ public class HomeController {
         var resource = new ByteArrayResource(file.getFileData());
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
                 "inline; filename=\"" + file.getFileName() + "\"").body(resource);
+    }
+
+    @PostMapping("/credentials")
+    public String saveCredential(Authentication auth, @ModelAttribute("credential") Credential credential, Model model) {
+        var saved = -1;
+        if (credential.getCredentialId() != null) {
+            saved = credentialService.updateCredential(credential);
+        } else {
+            credential.setUserId(userService.getUserByUserName(auth.getName()).getUserid());
+            saved = credentialService.addCredential(credential);
+        }
+        if (saved < 0) {
+            logger.error("Could not save credential");
+            model.addAttribute("saveCredentialError", true);
+        } else {
+            logger.info("Saved credential successfully");
+            model.addAttribute("saveCredentialSuccess", true);
+        }
+        return "result";
+    }
+
+    @GetMapping("/credentials/delete/{credentialId}")
+    public String deleteCredential(@PathVariable("credentialId") Integer credentialId, Model model) {
+        var deleted = -1;
+        deleted = credentialService.deleteCredential(credentialId);
+        if(deleted < 0) {
+            logger.error("Could not delete credential with id = {}", credentialId);
+            model.addAttribute("deleteCredentialError", true);
+        } else {
+            logger.info("Deleted credential successfully with id = {}", credentialId);
+            model.addAttribute("deleteCredentialSuccess", true);
+        }
+        return "result";
     }
 }
 
