@@ -47,12 +47,6 @@ class CloudStorageApplicationTests {
 	}
 
 	@Test
-	public void testRedirection() {
-		doMockSignUp();
-		Assertions.assertEquals("http://localhost:" + this.port + "/login", driver.getCurrentUrl());
-	}
-
-	@Test
 	public void testLoginPage() throws InterruptedException {
 		driver.get("http://localhost:" + this.port + "/login");
 		Thread.sleep(1000);
@@ -67,8 +61,17 @@ class CloudStorageApplicationTests {
 	}
 
 	@Test
+	public void testBadUrl() {
+		doMockSignUp();
+		doMockLogIn();
+		driver.get("http://localhost:" + this.port + "/some-random-page");
+		Assertions.assertFalse(driver.getPageSource().contains("Whitelabel Error Page"));
+	}
+
+	@Test
 	public void testSignupAndLogin() throws InterruptedException {
 		doMockSignUp();
+		Assertions.assertEquals("http://localhost:" + this.port + "/login", driver.getCurrentUrl());
 		doMockLogIn();
 		Assertions.assertEquals("Home", driver.getTitle());
 		var element = driver.findElement(By.id("logoutBtn"));
@@ -212,7 +215,7 @@ class CloudStorageApplicationTests {
 	}
 
 	private void doMockSignUp() {
-		WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
+		var webDriverWait = new WebDriverWait(driver, 2);
 		driver.get("http://localhost:" + this.port + "/signup");
 		webDriverWait.until(ExpectedConditions.titleContains("Sign Up"));
 
@@ -243,7 +246,7 @@ class CloudStorageApplicationTests {
 
 	private void doMockLogIn() {
 		driver.get("http://localhost:" + this.port + "/login");
-		WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
+		var webDriverWait = new WebDriverWait(driver, 2);
 
 		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputUsername")));
 		WebElement loginUserName = driver.findElement(By.id("inputUsername"));
