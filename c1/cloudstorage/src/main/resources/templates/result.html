@@ -10,52 +10,20 @@
     </head>
     <body class="p-3 mb-2 bg-light text-black">
         <div class="container justify-content-center w-50 p-3" style="margin-top: 5em;">
-            <div th:if="${saveNoteSuccess}" class="alert alert-success fill-parent">
-                <h1 class="display-5" id="saveNoteSuccess">Success</h1>
+            <div th:if="${saveSuccess}" class="alert alert-success fill-parent">
+                <h1 class="display-5" id="saveSuccess">Success</h1>
                 <span>Your changes were successfully saved. Click <a th:href="@{/home}">here</a> to continue.</span>
             </div>
-            <div th:if="${saveNoteError}" class="alert alert-danger fill-parent">
-                <h1 class="display-5" id="saveNoteError">Error</h1>
+            <div th:if="${saveError}" class="alert alert-danger fill-parent">
+                <h1 class="display-5" id="saveError">Error</h1>
                 <span>Your changes were not saved. Click <a th:href="@{/home}">here</a> to continue.</span>
             </div>
-            <div th:if="${deleteNoteSuccess}" class="alert alert-success fill-parent">
-                <h1 class="display-5" id="deleteNoteSuccess">Success</h1>
+            <div th:if="${deleteSuccess}" class="alert alert-success fill-parent">
+                <h1 class="display-5" id="deleteSuccess">Success</h1>
                 <span>Deleted successfully!. Click <a th:href="@{/home}">here</a> to continue.</span>
             </div>
-            <div th:if="${deleteNoteError}" class="alert alert-danger fill-parent">
-                <h1 class="display-5" id="deleteNoteError">Error</h1>
-                <span>Could not delete note. Click <a th:href="@{/home}">here</a> to continue.</span>
-            </div>
-            <div th:if="${uploadFileSuccess}" class="alert alert-success fill-parent">
-                <h1 class="display-5" id="uploadFileSuccess">Success</h1>
-                <span>Your changes were successfully saved. Click <a th:href="@{/home}">here</a> to continue.</span>
-            </div>
-            <div th:if="${uploadFileError}" class="alert alert-danger fill-parent">
-                <h1 class="display-5" id="uploadFileError">Error</h1>
-                <span>Your changes were not saved. Click <a th:href="@{/home}">here</a> to continue.</span>
-            </div>
-            <div th:if="${deleteFileSuccess}" class="alert alert-success fill-parent">
-                <h1 class="display-5" id="deleteFileSuccess">Success</h1>
-                <span>Deleted successfully!. Click <a th:href="@{/home}">here</a> to continue.</span>
-            </div>
-            <div th:if="${deleteFileError}" class="alert alert-danger fill-parent">
-                <h1 class="display-5" id="deleteFileError">Error</h1>
-                <span>Could not delete note. Click <a th:href="@{/home}">here</a> to continue.</span>
-            </div>
-            <div th:if="${saveCredentialSuccess}" class="alert alert-success fill-parent">
-                <h1 class="display-5" id="saveCredentialSuccess">Success</h1>
-                <span>Your changes were successfully saved. Click <a th:href="@{/home}">here</a> to continue.</span>
-            </div>
-            <div th:if="${saveCredentialError}" class="alert alert-danger fill-parent">
-                <h1 class="display-5" id="saveCredentialError">Error</h1>
-                <span>Your changes were not saved. Click <a th:href="@{/home}">here</a> to continue.</span>
-            </div>
-            <div th:if="${deleteCredentialSuccess}" class="alert alert-success fill-parent">
-                <h1 class="display-5" id="deleteCredentialSuccess">Success</h1>
-                <span>Deleted successfully!. Click <a th:href="@{/home}">here</a> to continue.</span>
-            </div>
-            <div th:if="${deleteCredentialError}" class="alert alert-danger fill-parent">
-                <h1 class="display-5" id="deleteCredentialError">Error</h1>
+            <div th:if="${deleteError}" class="alert alert-danger fill-parent">
+                <h1 class="display-5" id="deleteError">Error</h1>
                 <span>Could not delete note. Click <a th:href="@{/home}">here</a> to continue.</span>
             </div>
             <div th:if="${errorMessage}" class="alert alert-danger fill-parent">

@@ -66,10 +66,10 @@ public class HomeController {
         }
         if (saved < 0) {
             logger.error("Could not save note");
-            model.addAttribute("saveNoteError", true);
+            model.addAttribute("saveError", true);
         } else {
             logger.info("Saved note successfully");
-            model.addAttribute("saveNoteSuccess", true);
+            model.addAttribute("saveSuccess", true);
         }
         return "result";
     }
@@ -80,10 +80,10 @@ public class HomeController {
         deleted = noteService.deleteNote(noteId);
         if(deleted < 0) {
             logger.error("Could not delete note with id = {}", noteId);
-            model.addAttribute("deleteNoteError", true);
+            model.addAttribute("deleteError", true);
         } else {
             logger.info("Deleted note successfully with id = {}", noteId);
-            model.addAttribute("deleteNoteSuccess", true);
+            model.addAttribute("deleteSuccess", true);
         }
         return "result";
     }
@@ -102,12 +102,12 @@ public class HomeController {
                 file.setUserId(userService.getUserByUserName(auth.getName()).getUserid());
                 try {
                     var uploaded = fileService.uploadFile(file);
-                    model.addAttribute("uploadFileSuccess", "File uploaded successfully!");
+                    model.addAttribute("saveSuccess", "File uploaded successfully!");
                     logger.info("File with id = {} uploaded successfully", uploaded);
                 } catch (MaxUploadSizeExceededException e){
-                    model.addAttribute("errorMessage", "File size more than allowed limit (256KB)");
+                    model.addAttribute("saveError", "File size more than allowed limit (256KB)");
                 } catch (Exception e) {
-                    model.addAttribute("uploadFileError", "Could not upload file. Something went wrong. Try again!");
+                    model.addAttribute("saveError", "Could not upload file. Something went wrong. Try again!");
                 }
             } else {
                 model.addAttribute("errorMessage", "File name already exists!");
@@ -124,10 +124,10 @@ public class HomeController {
         deleted = fileService.deleteFile(fileId);
         if(deleted < 0) {
             logger.info("Could not delete file");
-            model.addAttribute("deleteFileError", true);
+            model.addAttribute("deleteError", true);
         } else {
             logger.info("Deleted file successfully");
-            model.addAttribute("deleteFileSuccess", true);
+            model.addAttribute("deleteSuccess", true);
         }
         return "result";
     }
@@ -152,10 +152,10 @@ public class HomeController {
         }
         if (saved < 0) {
             logger.error("Could not save credential");
-            model.addAttribute("saveCredentialError", true);
+            model.addAttribute("saveError", true);
         } else {
             logger.info("Saved credential successfully");
-            model.addAttribute("saveCredentialSuccess", true);
+            model.addAttribute("saveSuccess", true);
         }
         return "result";
     }
@@ -166,10 +166,10 @@ public class HomeController {
         deleted = credentialService.deleteCredential(credentialId);
         if(deleted < 0) {
             logger.error("Could not delete credential with id = {}", credentialId);
-            model.addAttribute("deleteCredentialError", true);
+            model.addAttribute("deleteError", true);
         } else {
             logger.info("Deleted credential successfully with id = {}", credentialId);
-            model.addAttribute("deleteCredentialSuccess", true);
+            model.addAttribute("deleteSuccess", true);
         }
         return "result";
     }
