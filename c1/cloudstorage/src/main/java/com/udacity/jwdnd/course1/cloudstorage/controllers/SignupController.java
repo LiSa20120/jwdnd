@@ -32,7 +32,8 @@ public class SignupController {
             return "signup";
         } else {
             userService.createNewUser(user);
+            model.addAttribute("signupSuccess", "You successfully signed up!");
         }
-        return "login";
+        return "redirect:/login";
     }
 }
