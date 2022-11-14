@@ -20,6 +20,9 @@ class CloudStorageApplicationTests {
 	private final String LAST_NAME = "lastname";
 	private final String USER_NAME = "username";
 	private final String PASSWORD = "password";
+	private final String NOTE_TITLE = "notetitle";
+	private final String NOTE_DESC = "notedesc";
+	private final String URL = "https://test.co";
 
 	@LocalServerPort
 	private int port;
@@ -68,7 +71,7 @@ class CloudStorageApplicationTests {
 		doMockSignUp();
 		doMockLogIn();
 		Assertions.assertEquals("Home", driver.getTitle());
-		WebElement element = driver.findElement(By.id("logoutBtn"));
+		var element = driver.findElement(By.id("logoutBtn"));
 		element.click();
 		Thread.sleep(1000);
 		Assertions.assertEquals("Login", driver.getTitle());
@@ -77,28 +80,159 @@ class CloudStorageApplicationTests {
 		Assertions.assertEquals("Login", driver.getTitle());
 	}
 
+	@Test
+	public void testNoteFunctions() throws InterruptedException {
+		doMockSignUp();
+		doMockLogIn();
+		goToNotesTab();
+
+		var showCredentialsModel = driver.findElement(By.id("show-notes-modal"));
+		showCredentialsModel.click();
+		Thread.sleep(500);
+
+		var noteTitle = driver.findElement(By.id("note-title"));
+		noteTitle.sendKeys(NOTE_TITLE);
+
+		var noteDesc = driver.findElement(By.id("note-description"));
+		noteDesc.sendKeys(NOTE_DESC);
+
+		saveNote();
+		goToHome();
+		goToNotesTab();
+
+		var saveNotes = driver.findElement(By.id("saved-note-title"));
+		Assertions.assertEquals(NOTE_TITLE, saveNotes.getText());
+		Thread.sleep(500);
+
+		var editNotesButton = driver.findElement(By.id("edit-note-btn"));
+		editNotesButton.click();
+		Thread.sleep(500);
+
+		noteTitle = driver.findElement(By.id("note-title"));
+		noteTitle.sendKeys("1");
+
+		saveNote();
+		goToHome();
+		goToNotesTab();
+
+		saveNotes = driver.findElement(By.id("saved-note-title"));
+		Assertions.assertEquals(NOTE_TITLE + "1", saveNotes.getText());
+
+		var deleteNoteButton = driver.findElement(By.id("delete-note-btn"));
+		deleteNoteButton.click();
+		Thread.sleep(1000);
+
+		goToHome();
+		goToNotesTab();
+
+		var ifNotePresent = driver.findElements(By.id("saved-note-url"))
+				.isEmpty();
+		Assertions.assertTrue(ifNotePresent);
+	}
+
+	@Test
+	public void testCredentialFunctions() throws InterruptedException {
+		doMockSignUp();
+		doMockLogIn();
+		goToCredsTab();
+
+		var showCredentialsModel = driver.findElement(By.id("show-credentials-modal"));
+		showCredentialsModel.click();
+		Thread.sleep(500);
+
+		var credentialUrl = driver.findElement(By.id("credential-url"));
+		credentialUrl.sendKeys(URL);
+
+		var credentialUsername = driver.findElement(By.id("credential-username"));
+		credentialUsername.sendKeys(USER_NAME);
+
+		var credentialPassword = driver.findElement(By.id("credential-password"));
+		credentialPassword.sendKeys(PASSWORD);
+
+		saveCredential();
+		goToHome();
+		goToCredsTab();
+
+		var saveCredentials = driver.findElement(By.id("saved-credential-url"));
+		Assertions.assertEquals(URL, saveCredentials.getText());
+		Thread.sleep(500);
+
+		var editCredentialsButton = driver.findElement(By.id("edit-credential-btn"));
+		editCredentialsButton.click();
+		Thread.sleep(500);
+
+		credentialUrl = driver.findElement(By.id("credential-url"));
+		credentialUrl.sendKeys(".in");
+
+		saveCredential();
+		goToHome();
+		goToCredsTab();
+
+		saveCredentials = driver.findElement(By.id("saved-credential-url"));
+		Assertions.assertEquals(URL + ".in", saveCredentials.getText());
+
+		var deleteCredentialButton = driver.findElement(By.id("delete-credential-btn"));
+		deleteCredentialButton.click();
+		Thread.sleep(1000);
+
+		goToHome();
+		goToCredsTab();
+
+		var ifCredentialPresent = driver.findElements(By.id("saved-credential-url"))
+				.isEmpty();
+		Assertions.assertTrue(ifCredentialPresent);
+	}
+
+	private void goToHome() throws InterruptedException {
+		var navigateHomeButton = driver.findElement(By.className("navigate-home"));
+		navigateHomeButton.click();
+		Thread.sleep(500);
+	}
+	private void goToNotesTab() throws InterruptedException {
+		var notesTab = driver.findElement(By.id("nav-notes-tab"));
+		notesTab.click();
+		Thread.sleep(500);
+	}
+
+	private void goToCredsTab() throws InterruptedException {
+		var credentialsTab = driver.findElement(By.id("nav-credentials-tab"));
+		credentialsTab.click();
+		Thread.sleep(500);
+	}
+	private void saveNote() throws InterruptedException {
+		var saveNote = driver.findElement(By.id("save-note"));
+		saveNote.click();
+		Thread.sleep(1000);
+	}
+
+	private void saveCredential() throws InterruptedException {
+		var credentialSubmit = driver.findElement(By.id("save-credentials"));
+		credentialSubmit.click();
+		Thread.sleep(1000);
+	}
+
 	private void doMockSignUp() {
 		WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
 		driver.get("http://localhost:" + this.port + "/signup");
 		webDriverWait.until(ExpectedConditions.titleContains("Sign Up"));
 
 		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputFirstName")));
-		WebElement inputFirstName = driver.findElement(By.id("inputFirstName"));
+		var inputFirstName = driver.findElement(By.id("inputFirstName"));
 		inputFirstName.click();
 		inputFirstName.sendKeys(FIRST_NAME);
 
 		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputLastName")));
-		WebElement inputLastName = driver.findElement(By.id("inputLastName"));
+		var inputLastName = driver.findElement(By.id("inputLastName"));
 		inputLastName.click();
 		inputLastName.sendKeys(LAST_NAME);
 
 		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputUsername")));
-		WebElement inputUsername = driver.findElement(By.id("inputUsername"));
+		var inputUsername = driver.findElement(By.id("inputUsername"));
 		inputUsername.click();
 		inputUsername.sendKeys(USER_NAME);
 
 		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputPassword")));
-		WebElement inputPassword = driver.findElement(By.id("inputPassword"));
+		var inputPassword = driver.findElement(By.id("inputPassword"));
 		inputPassword.click();
 		inputPassword.sendKeys(PASSWORD);
 

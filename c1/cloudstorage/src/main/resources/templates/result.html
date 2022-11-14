@@ -12,24 +12,24 @@
         <div class="container justify-content-center w-50 p-3" style="margin-top: 5em;">
             <div th:if="${saveSuccess}" class="alert alert-success fill-parent">
                 <h1 class="display-5" id="saveSuccess">Success</h1>
-                <span>Your changes were successfully saved. Click <a th:href="@{/home}">here</a> to continue.</span>
+                <span>Your changes were successfully saved. Click <a class="navigate-home" th:href="@{/home}">here</a> to continue.</span>
             </div>
             <div th:if="${saveError}" class="alert alert-danger fill-parent">
                 <h1 class="display-5" id="saveError">Error</h1>
-                <span>Your changes were not saved. Click <a th:href="@{/home}">here</a> to continue.</span>
+                <span>Your changes were not saved. Click <a class="navigate-home" th:href="@{/home}">here</a> to continue.</span>
             </div>
             <div th:if="${deleteSuccess}" class="alert alert-success fill-parent">
                 <h1 class="display-5" id="deleteSuccess">Success</h1>
-                <span>Deleted successfully!. Click <a th:href="@{/home}">here</a> to continue.</span>
+                <span>Deleted successfully!. Click <a class="navigate-home" th:href="@{/home}">here</a> to continue.</span>
             </div>
             <div th:if="${deleteError}" class="alert alert-danger fill-parent">
                 <h1 class="display-5" id="deleteError">Error</h1>
-                <span>Could not delete note. Click <a th:href="@{/home}">here</a> to continue.</span>
+                <span>Could not delete note. Click <a class="navigate-home" th:href="@{/home}">here</a> to continue.</span>
             </div>
             <div th:if="${errorMessage}" class="alert alert-danger fill-parent">
                 <h1 class="display-5">Error</h1>
                 <span th:text="${errorMessage}"></span>
-                <span>Click <a th:href="@{/home}">here</a> to continue.</span>
+                <span>Click <a class="navigate-home" th:href="@{/home}">here</a> to continue.</span>
             </div>
         </div>
     </body>
