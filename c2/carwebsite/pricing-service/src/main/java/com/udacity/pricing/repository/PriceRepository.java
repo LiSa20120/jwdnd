@@ -1,4 +1,4 @@
-package com.udacity.pricing.domain.price;
+package com.udacity.pricing.repository;
 
 import com.udacity.pricing.entity.Price;
 import org.springframework.data.repository.CrudRepository;
