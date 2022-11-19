@@ -89,7 +89,7 @@ public class HomeController {
     }
 
     @PostMapping("/files")
-    public String uploadFile(Authentication auth, @ModelAttribute("fileUpload") MultipartFile fileUpload, Model model) throws IOException {
+    public String uploadFile(Authentication auth, @ModelAttribute("fileUpload") MultipartFile fileUpload, Model model) {
         var fileName = fileUpload.getOriginalFilename();
         var fileSize = fileUpload.getSize();
         if(fileName != null && fileSize != 0) {
@@ -98,16 +98,18 @@ public class HomeController {
                 file.setFileName(fileUpload.getOriginalFilename());
                 file.setContentType(fileUpload.getContentType());
                 file.setFileSize(Long.toString(fileUpload.getSize()));
-                file.setFileData(fileUpload.getBytes());
+                try{
+                    file.setFileData(fileUpload.getBytes());
+                } catch (Exception e) {
+                    model.addAttribute("errorMessage", "File size more than allowed(256KB)");
+                }
                 file.setUserId(userService.getUserByUserName(auth.getName()).getUserid());
-                try {
-                    var uploaded = fileService.uploadFile(file);
+                var uploaded = fileService.uploadFile(file);
+                if(uploaded < 0) {
+                    model.addAttribute("saveError", "Could not upload file. Something went wrong. Try again!");
+                } else {
                     model.addAttribute("saveSuccess", "File uploaded successfully!");
                     logger.info("File with id = {} uploaded successfully", uploaded);
-                } catch (MaxUploadSizeExceededException e){
-                    model.addAttribute("saveError", "File size more than allowed limit (256KB)");
-                } catch (Exception e) {
-                    model.addAttribute("saveError", "Could not upload file. Something went wrong. Try again!");
                 }
             } else {
                 model.addAttribute("errorMessage", "File name already exists!");

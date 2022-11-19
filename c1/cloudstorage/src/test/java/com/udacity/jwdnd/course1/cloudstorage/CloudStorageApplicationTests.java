@@ -15,14 +15,11 @@ import org.springframework.boot.web.server.LocalServerPort;
 import java.io.File;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CloudStorageApplicationTests {
-
-	private final String FIRST_NAME = "firstname";
-	private final String LAST_NAME = "lastname";
-	private final String USER_NAME = "username";
-	private final String PASSWORD = "password";
-	private final String NOTE_TITLE = "notetitle";
-	private final String NOTE_DESC = "notedesc";
-	private final String URL = "https://test.co";
+	private static final String FIRST_NAME = "firstname";
+	private static final String LAST_NAME = "lastname";
+	private static final String NOTE_TITLE = "notetitle";
+	private static final String NOTE_DESC = "notedesc";
+	private static final String URL = "https://test.co";
 
 	@LocalServerPort
 	private int port;
@@ -62,17 +59,23 @@ class CloudStorageApplicationTests {
 
 	@Test
 	public void testBadUrl() {
-		doMockSignUp();
-		doMockLogIn();
+		doMockSignUp(FIRST_NAME, LAST_NAME, "testBadUrl", "testBadUrl");
+		doMockLogIn("testBadUrl", "testBadUrl");
 		driver.get("http://localhost:" + this.port + "/some-random-page");
 		Assertions.assertFalse(driver.getPageSource().contains("Whitelabel Error Page"));
 	}
 
 	@Test
+	public void testRedirection() {
+		doMockSignUp(FIRST_NAME, LAST_NAME, "testRedirection", "testRedirection");
+			Assertions.assertEquals("http://localhost:" + this.port + "/login", driver.getCurrentUrl());
+	}
+
+	@Test
 	public void testSignupAndLogin() throws InterruptedException {
-		doMockSignUp();
+		doMockSignUp(FIRST_NAME, LAST_NAME, "testSignupAndLogin", "testSignupAndLogin");
 		Assertions.assertEquals("http://localhost:" + this.port + "/login", driver.getCurrentUrl());
-		doMockLogIn();
+		doMockLogIn("testSignupAndLogin", "testSignupAndLogin");
 		Assertions.assertEquals("Home", driver.getTitle());
 		var element = driver.findElement(By.id("logoutBtn"));
 		element.click();
@@ -85,8 +88,8 @@ class CloudStorageApplicationTests {
 
 	@Test
 	public void testNoteFunctions() throws InterruptedException {
-		doMockSignUp();
-		doMockLogIn();
+		doMockSignUp(FIRST_NAME, LAST_NAME, "testNoteFunctions", "testNoteFunctions");
+		doMockLogIn("testNoteFunctions", "testNoteFunctions");
 		goToNotesTab();
 
 		var showCredentialsModel = driver.findElement(By.id("show-notes-modal"));
@@ -135,8 +138,8 @@ class CloudStorageApplicationTests {
 
 	@Test
 	public void testCredentialFunctions() throws InterruptedException {
-		doMockSignUp();
-		doMockLogIn();
+		doMockSignUp(FIRST_NAME, LAST_NAME, "testCredFn", "testCredFn");
+		doMockLogIn("testCredFn", "testCredFn");
 		goToCredsTab();
 
 		var showCredentialsModel = driver.findElement(By.id("show-credentials-modal"));
@@ -147,10 +150,10 @@ class CloudStorageApplicationTests {
 		credentialUrl.sendKeys(URL);
 
 		var credentialUsername = driver.findElement(By.id("credential-username"));
-		credentialUsername.sendKeys(USER_NAME);
+		credentialUsername.sendKeys("testCredFn");
 
 		var credentialPassword = driver.findElement(By.id("credential-password"));
-		credentialPassword.sendKeys(PASSWORD);
+		credentialPassword.sendKeys("testCredFn");
 
 		saveCredential();
 		goToHome();
@@ -186,6 +189,29 @@ class CloudStorageApplicationTests {
 		Assertions.assertTrue(ifCredentialPresent);
 	}
 
+	@Test
+	public void testLargeUpload() {
+		doMockSignUp(FIRST_NAME, LAST_NAME, "testLargeUpload", "testLargeUpload");
+		doMockLogIn("testLargeUpload", "testLargeUpload");
+
+		var webDriverWait = new WebDriverWait(driver, 2);
+		var fileName = "upload5m.zip";
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("fileUpload")));
+		var fileSelectButton = driver.findElement(By.id("fileUpload"));
+		fileSelectButton.sendKeys(new File(fileName).getAbsolutePath());
+
+		var uploadButton = driver.findElement(By.id("uploadButton"));
+		uploadButton.click();
+		try {
+			webDriverWait.until(ExpectedConditions.presenceOfElementLocated(By.id("saveSuccess")));
+		} catch (org.openqa.selenium.TimeoutException e) {
+			System.out.println("Large File upload failed");
+		}
+		Assertions.assertFalse(driver.getPageSource().contains("HTTP Status 403 – Forbidden"));
+
+	}
+
 	private void goToHome() throws InterruptedException {
 		var navigateHomeButton = driver.findElement(By.className("navigate-home"));
 		navigateHomeButton.click();
@@ -214,7 +240,7 @@ class CloudStorageApplicationTests {
 		Thread.sleep(1000);
 	}
 
-	private void doMockSignUp() {
+	private void doMockSignUp(String firstname, String lastname, String username, String password) {
 		var webDriverWait = new WebDriverWait(driver, 2);
 		driver.get("http://localhost:" + this.port + "/signup");
 		webDriverWait.until(ExpectedConditions.titleContains("Sign Up"));
@@ -222,41 +248,41 @@ class CloudStorageApplicationTests {
 		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputFirstName")));
 		var inputFirstName = driver.findElement(By.id("inputFirstName"));
 		inputFirstName.click();
-		inputFirstName.sendKeys(FIRST_NAME);
+		inputFirstName.sendKeys(firstname);
 
 		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputLastName")));
 		var inputLastName = driver.findElement(By.id("inputLastName"));
 		inputLastName.click();
-		inputLastName.sendKeys(LAST_NAME);
+		inputLastName.sendKeys(lastname);
 
 		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputUsername")));
 		var inputUsername = driver.findElement(By.id("inputUsername"));
 		inputUsername.click();
-		inputUsername.sendKeys(USER_NAME);
+		inputUsername.sendKeys(username);
 
 		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputPassword")));
 		var inputPassword = driver.findElement(By.id("inputPassword"));
 		inputPassword.click();
-		inputPassword.sendKeys(PASSWORD);
+		inputPassword.sendKeys(password);
 
 		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("buttonSignUp")));
 		WebElement buttonSignUp = driver.findElement(By.id("buttonSignUp"));
 		buttonSignUp.click();
 	}
 
-	private void doMockLogIn() {
+	private void doMockLogIn(String username, String password) {
 		driver.get("http://localhost:" + this.port + "/login");
 		var webDriverWait = new WebDriverWait(driver, 2);
 
 		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputUsername")));
 		WebElement loginUserName = driver.findElement(By.id("inputUsername"));
 		loginUserName.click();
-		loginUserName.sendKeys(USER_NAME);
+		loginUserName.sendKeys(username);
 
 		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputPassword")));
 		WebElement loginPassword = driver.findElement(By.id("inputPassword"));
 		loginPassword.click();
-		loginPassword.sendKeys(PASSWORD);
+		loginPassword.sendKeys(password);
 
 		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("login-button")));
 		WebElement loginButton = driver.findElement(By.id("login-button"));
