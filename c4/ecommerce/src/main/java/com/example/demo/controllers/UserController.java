@@ -1,9 +1,6 @@
 package com.example.demo.controllers;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,15 +43,19 @@ public class UserController {
 	@PostMapping("/create")
 	public ResponseEntity<User> createUser(@RequestBody CreateUserRequest createUserRequest) {
 		User user = new User();
-		user.setUsername(createUserRequest.getUsername());
-		String password = createUserRequest.getPassword();
-		if(password == null || password.length()<7 || !createUserRequest.getPassword().equals(createUserRequest.getConfirmPassword())){
+		User duplUser = userRepository.findByUsername(createUserRequest.getUsername());
+		if (duplUser != null) {
 			return ResponseEntity.badRequest().build();
 		}
-		user.setPassword(bCryptPasswordEncoder.encode(password));
+		user.setUsername(createUserRequest.getUsername());
+		if (createUserRequest.getPassword().length() < 7 ||
+				!createUserRequest.getPassword().equals(createUserRequest.getConfirmPassword())) {
+			return ResponseEntity.badRequest().build();
+		}
 		Cart cart = new Cart();
 		cartRepository.save(cart);
 		user.setCart(cart);
+		user.setPassword(bCryptPasswordEncoder.encode(createUserRequest.getPassword()));
 		userRepository.save(user);
 		return ResponseEntity.ok(user);
 	}
