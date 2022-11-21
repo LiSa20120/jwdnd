@@ -20,14 +20,14 @@ import java.util.Set;
 @Setter
 public class Schedule {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @ManyToMany
-    private List<Employee> employeeIds;
+    private List<Employee> employees;
 
     @ManyToMany
-    private List<Pet> petIds;
+    private List<Pet> pets;
 
     private LocalDate date;
 

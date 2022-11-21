@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @Setter
 public class Pet {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     
     @Enumerated
@@ -20,11 +20,10 @@ public class Pet {
 
     private String name;
 
-    private long ownerId;
-
     private LocalDate birthDate;
 
     private String notes;
-    @ManyToOne
-    private Customer customer;
+
+    @ManyToOne(targetEntity = Customer.class, optional = false)
+    private Customer owner;
 }

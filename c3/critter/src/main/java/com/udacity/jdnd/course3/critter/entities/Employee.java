@@ -10,15 +10,16 @@ import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.ElementCollection;
+import java.io.Serializable;
 import java.time.DayOfWeek;
 import java.util.Set;
 
 @Entity
 @Getter
 @Setter
-public class Employee {
+public class Employee implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     private String name;

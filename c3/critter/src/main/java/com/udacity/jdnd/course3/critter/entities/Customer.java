@@ -25,6 +25,10 @@ public class Customer {
 
     private String notes;
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.PERSIST)
+    @OneToMany(targetEntity = Pet.class)
     private List<Pet> pets;
+
+    public void insertPet(Pet pet) {
+        pets.add(pet);
+    }
 }
