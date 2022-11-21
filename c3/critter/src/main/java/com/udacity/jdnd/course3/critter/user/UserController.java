@@ -98,7 +98,7 @@ public class UserController {
         employeeDTO.setId(employee.getId());
         employeeDTO.setName(employee.getName());
         employeeDTO.setSkills(employee.getSkills());
-        employee.setDaysAvailable(employee.getDaysAvailable());
+        employeeDTO.setDaysAvailable(employee.getDaysAvailable());
         return employeeDTO;
     }
 }
